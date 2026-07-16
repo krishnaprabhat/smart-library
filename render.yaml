@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: smart-library-api
+    env: docker
+    dockerfilePath: Dockerfile
+    dockerContext: .
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        value: "Server=your-database-server;Database=SmartLibraryDB;User Id=your-username;Password=your-password;TrustServerCertificate=True;"
