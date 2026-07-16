@@ -1,0 +1,139 @@
+<div class="page-wrapper">
+  <nav class="navbar">
+    <div class="brand"><span>📚</span> Smart Library</div>
+    <div class="nav-links">
+      <a routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/admin/books" routerLinkActive="active">Books</a>
+      <a routerLink="/admin/borrows" routerLinkActive="active">Borrows</a>
+      <a routerLink="/admin/users" routerLinkActive="active">Users</a>
+    </div>
+    <div class="nav-user">
+      <span class="user-name">🛡 {{ auth.getName() }}</span>
+      <button class="btn-logout" (click)="auth.logout()">Logout</button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h2>📚 Manage Books</h2>
+      <p>Add, edit, or remove books from the catalog</p>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+      <div class="filter-bar" style="margin:0;flex:1;">
+        <input type="text" [(ngModel)]="search" (ngModelChange)="applyFilter()" placeholder="🔍 Search books..." />
+        <select [(ngModel)]="branch" (ngModelChange)="applyFilter()">
+          <option value="">All Branches</option>
+          <option *ngFor="let b of branches" [value]="b">{{ b }}</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" (click)="openAdd()">+ Add Book</button>
+    </div>
+
+    <div *ngIf="loading" class="empty-state"><div class="empty-icon">⏳</div><p>Loading...</p></div>
+
+    <div class="glass-card" *ngIf="!loading">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th><th>Author</th><th>ISBN</th><th>Branch</th><th>Type</th>
+              <th>Available</th><th>Total</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let book of filteredBooks">
+              <td><strong>{{ book.title }}</strong></td>
+              <td>{{ book.author }}</td>
+              <td style="color:rgba(255,255,255,0.5);font-size:0.8rem;">{{ book.isbn || '—' }}</td>
+              <td><span class="badge badge-branch">{{ book.branch }}</span></td>
+              <td><span class="badge badge-type">{{ book.type }}</span></td>
+              <td>
+                <span class="badge" [ngClass]="book.availableCopies > 0 ? 'badge-available' : 'badge-none'">
+                  {{ book.availableCopies }}
+                </span>
+              </td>
+              <td>{{ book.totalCopies }}</td>
+              <td style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                <button class="btn btn-primary btn-sm" (click)="openEdit(book)">✏ Edit</button>
+                <button class="btn btn-danger btn-sm" (click)="delete(book)">🗑 Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="filteredBooks.length === 0" class="empty-state" style="padding:2rem;">
+        <p>No books found.</p>
+      </div>
+    </div>
+
+    <!-- Add / Edit Modal -->
+    <div class="modal-backdrop" *ngIf="showModal" (click)="showModal=false">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <h3>{{ isEdit ? '✏ Edit Book' : '+ Add New Book' }}</h3>
+        <div class="form-group">
+          <label>Title *</label>
+          <input type="text" [(ngModel)]="form.title" placeholder="Book title" />
+        </div>
+        <div class="form-group">
+          <label>Author *</label>
+          <input type="text" [(ngModel)]="form.author" placeholder="Author name" />
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-group">
+            <label>Branch</label>
+            <select [(ngModel)]="form.branch">
+              <option *ngFor="let b of branches" [value]="b">{{ b }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select [(ngModel)]="form.type">
+              <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-group">
+            <label>ISBN</label>
+            <input type="text" [(ngModel)]="form.isbn" placeholder="978-X-XXX-XXXXX-X" />
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <input type="text" [(ngModel)]="form.description" placeholder="Short description..." />
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-group">
+            <label>Category</label>
+            <input type="text" [(ngModel)]="form.category" placeholder="e.g. Algorithms" />
+          </div>
+          <div class="form-group">
+            <label>Publisher</label>
+            <input type="text" [(ngModel)]="form.publisher" placeholder="Publisher name" />
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-group">
+            <label>Total Copies</label>
+            <input type="number" [(ngModel)]="form.totalCopies" min="1" />
+          </div>
+          <div class="form-group" *ngIf="isEdit">
+            <label>Available Copies</label>
+            <input type="number" [(ngModel)]="form.availableCopies" min="0" [max]="form.totalCopies ?? 9999" />
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-danger" (click)="showModal=false">Cancel</button>
+          <button class="btn btn-primary" [disabled]="saving" (click)="save()">
+            {{ saving ? 'Saving…' : (isEdit ? 'Update Book' : 'Add Book') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div *ngIf="toast" class="toast" [ngClass]="toast.type === 'success' ? 'toast-success' : 'toast-error'">
+    {{ toast.message }}
+  </div>
+</div>

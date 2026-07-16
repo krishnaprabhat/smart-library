@@ -1,0 +1,18 @@
+# User specific files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Angular compilation
+library-frontend/node_modules/
+library-frontend/.angular/
+library-frontend/dist/
+
+# .NET compilation
+**/bin/
+**/obj/
+
+# Skill repository
+ui-ux-pro-max-skill/

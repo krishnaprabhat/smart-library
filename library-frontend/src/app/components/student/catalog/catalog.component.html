@@ -1,0 +1,103 @@
+<div class="page-wrapper">
+  <nav class="navbar">
+    <div class="brand"><span>📚</span> Smart Library</div>
+    <div class="nav-links">
+      <a routerLink="/student/catalog" routerLinkActive="active">Browse Books</a>
+      <a routerLink="/student/my-borrows" routerLinkActive="active">My Borrows</a>
+    </div>
+    <div class="nav-user">
+      <span class="user-name">👋 {{ auth.getName() }}</span>
+      <button class="btn-logout" (click)="auth.logout()">Logout</button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h2>📖 Book Catalog</h2>
+      <p>Browse and borrow books from our digital library</p>
+    </div>
+
+    <!-- 🔥 Trending Magazines Carousel Showcase -->
+    <div class="magazines-showcase" *ngIf="!loading && magazines.length > 0 && !search && !branch && !selectedType">
+      <h3 class="section-title">🔥 Trending Magazines</h3>
+      <div class="magazines-carousel">
+        <div class="magazine-card" *ngFor="let mag of magazines">
+          <div class="magazine-cover" [style.background]="getMagazineGradient(mag.title)">
+            <div class="cover-header">
+              <span class="cover-issue">ISSUE 2026</span>
+              <span class="cover-cat">{{ mag.category }}</span>
+            </div>
+            <h1 class="cover-title">{{ mag.title }}</h1>
+            <div class="cover-footer">
+              <span>weekly</span>
+            </div>
+          </div>
+          <div class="magazine-body">
+            <span class="badge" [ngClass]="mag.availableCopies > 0 ? 'badge-available' : 'badge-none'" style="margin-bottom: 0.5rem;">
+              {{ mag.availableCopies > 0 ? mag.availableCopies + ' available' : 'Out of stock' }}
+            </span>
+            <button class="btn btn-primary btn-sm" style="width: 100%;"
+                    [disabled]="mag.availableCopies === 0 || borrowingId === mag.id"
+                    (click)="borrow(mag)">
+              {{ borrowingId === mag.id ? 'Borrowing…' : '📥 Borrow Issue' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Catalog Filter Bar -->
+    <div class="filter-bar">
+      <input type="text" [(ngModel)]="search" (ngModelChange)="onSearchChange()"
+             placeholder="🔍 Search by title, author or ISBN..." />
+      <select [(ngModel)]="branch" (ngModelChange)="onBranchChange()">
+        <option value="">All Branches</option>
+        <option *ngFor="let b of branches" [value]="b">{{ b }}</option>
+      </select>
+      <select [(ngModel)]="selectedType" (ngModelChange)="onTypeChange()">
+        <option value="">All Types</option>
+        <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+      </select>
+      <button class="btn btn-danger btn-sm" *ngIf="search || branch || selectedType" (click)="clearSearch()">✕ Clear</button>
+    </div>
+
+    <div *ngIf="loading" class="empty-state">
+      <div class="empty-icon">⏳</div>
+      <p>Loading library catalog...</p>
+    </div>
+
+    <div *ngIf="!loading && regularBooks.length === 0" class="empty-state">
+      <div class="empty-icon">🔎</div>
+      <p>No catalog items found matching your search.</p>
+    </div>
+
+    <div class="books-grid" *ngIf="!loading && regularBooks.length > 0">
+      <div class="book-card" *ngFor="let book of regularBooks">
+        <div class="book-title">{{ book.title }}</div>
+        <div class="book-author">by {{ book.author }}</div>
+        <div class="book-meta">
+          <span class="badge badge-branch">{{ book.branch }}</span>
+          <span class="badge badge-type">{{ book.type }}</span>
+          <span class="badge" [ngClass]="book.availableCopies > 0 ? 'badge-available' : 'badge-none'">
+            {{ book.availableCopies > 0 ? '✓ ' + book.availableCopies + ' available' : '✗ Unavailable' }}
+          </span>
+        </div>
+        <div *ngIf="book.isbn" style="font-size:0.78rem;color:rgba(255,255,255,0.4);margin-top:-0.2rem;">
+          ISBN: {{ book.isbn }}
+        </div>
+        <div *ngIf="book.publisher" style="font-size:0.78rem;color:rgba(255,255,255,0.4);">
+          {{ book.publisher }}
+        </div>
+        <button class="btn btn-primary btn-sm" style="margin-top:0.5rem;"
+                [disabled]="book.availableCopies === 0 || borrowingId === book.id"
+                (click)="borrow(book)">
+          {{ borrowingId === book.id ? 'Borrowing…' : '📥 Borrow' }}
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <div *ngIf="toast" class="toast" [ngClass]="toast.type === 'success' ? 'toast-success' : 'toast-error'">
+    {{ toast.message }}
+  </div>
+</div>

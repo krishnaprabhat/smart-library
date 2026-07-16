@@ -1,0 +1,104 @@
+<div class="page-wrapper">
+  <nav class="navbar">
+    <div class="brand"><span>📚</span> Smart Library</div>
+    <div class="nav-links">
+      <a routerLink="/student/catalog" routerLinkActive="active">Browse Books</a>
+      <a routerLink="/student/my-borrows" routerLinkActive="active">My Borrows</a>
+    </div>
+    <div class="nav-user">
+      <span class="user-name">👋 {{ auth.getName() }}</span>
+      <button class="btn-logout" (click)="auth.logout()">Logout</button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h2>📋 My Borrowed Books</h2>
+      <p>Track your borrowings, due dates, and fines</p>
+    </div>
+
+    <div *ngIf="loading" class="empty-state">
+      <div class="empty-icon">⏳</div>
+      <p>Loading your borrows...</p>
+    </div>
+
+    <!-- Active borrows -->
+    <div *ngIf="!loading && activeBorrows.length > 0" class="glass-card" style="margin-bottom:1.5rem;">
+      <h3 style="color:#c4b5fd;margin-bottom:1rem;">📌 Currently Borrowed ({{ activeBorrows.length }})</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Book</th><th>Borrow Date</th><th>Due Date</th><th>Status</th><th>Fine</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of activeBorrows">
+              <td>
+                <strong>{{ b.bookTitle }}</strong><br>
+                <span style="color:rgba(255,255,255,0.5);font-size:0.8rem;">{{ b.bookAuthor }}</span>
+              </td>
+              <td>{{ b.borrowDate | date:'dd MMM yyyy' }}</td>
+              <td>{{ b.dueDate | date:'dd MMM yyyy' }}</td>
+              <td>
+                <span class="badge" [ngClass]="b.isOverdue ? 'badge-overdue' : 'badge-active'">
+                  {{ b.isOverdue ? '⚠ Overdue' : '✓ Active' }}
+                </span>
+                <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:0.3rem;">
+                  {{ daysLabel(b.dueDate) }}
+                </div>
+              </td>
+              <td>
+                <span *ngIf="b.fine > 0" class="fine-amount">Rs.{{ b.fine.toFixed(2) }}</span>
+                <span *ngIf="b.fine === 0" class="fine-paid">No fine</span>
+              </td>
+              <td>
+                <button class="btn btn-success btn-sm" [disabled]="returning === b.id" (click)="returnBook(b)">
+                  {{ returning === b.id ? 'Returning…' : '↩ Return' }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Returned borrows history -->
+    <div *ngIf="!loading && returnedBorrows.length > 0" class="glass-card">
+      <h3 style="color:rgba(255,255,255,0.5);margin-bottom:1rem;">📂 Return History ({{ returnedBorrows.length }})</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Book</th><th>Borrowed</th><th>Returned</th><th>Fine Paid</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of returnedBorrows">
+              <td>
+                <strong>{{ b.bookTitle }}</strong><br>
+                <span style="color:rgba(255,255,255,0.5);font-size:0.8rem;">{{ b.bookAuthor }}</span>
+              </td>
+              <td>{{ b.borrowDate | date:'dd MMM yyyy' }}</td>
+              <td>{{ b.returnDate | date:'dd MMM yyyy' }}</td>
+              <td>
+                <span *ngIf="b.fine > 0" class="fine-amount">Rs.{{ b.fine.toFixed(2) }}</span>
+                <span *ngIf="b.fine === 0" class="fine-paid">Rs.0.00</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div *ngIf="!loading && borrows.length === 0" class="empty-state">
+      <div class="empty-icon">📚</div>
+      <p>You haven't borrowed any books yet.</p>
+      <a routerLink="/student/catalog" class="btn btn-primary" style="display:inline-block;margin-top:1rem;">Browse Catalog</a>
+    </div>
+  </main>
+
+  <div *ngIf="toast" class="toast" [ngClass]="toast.type === 'success' ? 'toast-success' : 'toast-error'">
+    {{ toast.message }}
+  </div>
+</div>

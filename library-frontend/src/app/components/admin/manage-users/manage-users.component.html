@@ -1,0 +1,76 @@
+<div class="page-wrapper">
+  <nav class="navbar">
+    <div class="brand"><span>📚</span> Smart Library</div>
+    <div class="nav-links">
+      <a routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/admin/books" routerLinkActive="active">Books</a>
+      <a routerLink="/admin/borrows" routerLinkActive="active">Borrows</a>
+      <a routerLink="/admin/users" routerLinkActive="active">Users</a>
+    </div>
+    <div class="nav-user">
+      <span class="user-name">🛡 {{ auth.getName() }}</span>
+      <button class="btn-logout" (click)="auth.logout()">Logout</button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h2>👥 Manage Users</h2>
+      <p>View and manage all registered students and staff</p>
+    </div>
+
+    <div class="filter-bar" style="margin-bottom:1.5rem;">
+      <input type="text" [(ngModel)]="search" (ngModelChange)="applyFilter()" placeholder="🔍 Search by name or email..." />
+    </div>
+
+    <div *ngIf="loading" class="empty-state"><div class="empty-icon">⏳</div><p>Loading users...</p></div>
+
+    <div class="glass-card" *ngIf="!loading">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Name</th><th>Email / ID</th><th>Department</th>
+              <th>Role</th><th>Active Borrows</th><th>Joined</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let u of filteredUsers; let i = index">
+              <td style="color:rgba(255,255,255,0.4)">{{ i + 1 }}</td>
+              <td><strong>{{ u.name }}</strong></td>
+              <td style="color:rgba(255,255,255,0.6);font-size:0.85rem;">{{ u.studentId }}</td>
+              <td>{{ u.department || '—' }}</td>
+              <td>
+                <select class="role-select"
+                        [ngModel]="u.role"
+                        (ngModelChange)="changeRole(u, $event)"
+                        [disabled]="u.studentId === auth.getName()">
+                  <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+                </select>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="u.borrowCount > 0 ? 'badge-active' : 'badge-available'">
+                  {{ u.borrowCount }}
+                </span>
+              </td>
+              <td style="font-size:0.8rem;color:rgba(255,255,255,0.5);">{{ u.createdAt | date:'dd MMM yyyy' }}</td>
+              <td>
+                <button class="btn btn-danger btn-sm" (click)="deleteUser(u)"
+                        [disabled]="u.role === 'Admin'">
+                  🗑 Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="filteredUsers.length === 0" class="empty-state" style="padding:2rem;">
+        <p>No users found.</p>
+      </div>
+    </div>
+  </main>
+
+  <div *ngIf="toast" class="toast" [ngClass]="toast.type === 'success' ? 'toast-success' : 'toast-error'">
+    {{ toast.message }}
+  </div>
+</div>

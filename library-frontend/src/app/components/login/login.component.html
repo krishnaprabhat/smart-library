@@ -1,0 +1,49 @@
+<div class="login-page">
+  <div class="particles" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="login-card">
+    <div class="logo">
+      <span class="logo-icon">📚</span>
+      <h1>Smart Library</h1>
+      <p>Campus Library Management System</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button [class.active]="mode === 'login'" (click)="mode = 'login'; error = ''">Login</button>
+      <button [class.active]="mode === 'register'" (click)="mode = 'register'; error = ''">Register</button>
+    </div>
+
+    <form (ngSubmit)="submit()" #f="ngForm">
+      @if (mode === 'register') {
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" placeholder="Your full name" [(ngModel)]="name" name="name" required />
+        </div>
+      }
+      <div class="field">
+        <label>Email / Student ID</label>
+        <input type="email" placeholder="student@library.com" [(ngModel)]="studentId" name="studentId" required />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" placeholder="••••••••" [(ngModel)]="password" name="password" required />
+      </div>
+
+      @if (error) {
+        <div class="error">{{ error }}</div>
+      }
+
+      <button type="submit" class="btn-submit" [disabled]="loading">
+        @if (loading) { <span class="spinner"></span> } @else { {{ mode === 'login' ? 'Sign In' : 'Create Account' }} }
+      </button>
+    </form>
+
+    <div class="hint">
+      <strong>Admin:</strong> admin&#64;library.com / Admin&#64;123<br>
+      <strong>Student:</strong> student1&#64;library.com / Student&#64;123
+    </div>
+  </div>
+</div>

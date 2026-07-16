@@ -1,0 +1,115 @@
+.magazines-showcase {
+  margin-bottom: 2.5rem;
+}
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #c4b5fd;
+  margin-bottom: 1.2rem;
+  letter-spacing: -0.01em;
+}
+.magazines-carousel {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 0.5rem 1.5rem 0.5rem;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.magazine-card {
+  flex: 0 0 240px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 
+    0 12px 28px rgba(0, 0, 0, 0.25),
+    inset 3px 3px 6px rgba(255, 255, 255, 0.03),
+    inset -3px -3px 8px rgba(0, 0, 0, 0.35);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+.magazine-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(167, 139, 250, 0.35);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    inset 4px 4px 8px rgba(255, 255, 255, 0.05),
+    inset -4px -4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.magazine-cover {
+  height: 240px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 28px 28px 0 0;
+  box-shadow: inset 0 -30px 40px rgba(0,0,0,0.5);
+  transition: background 0.3s ease;
+}
+.magazine-cover::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(rgba(255,255,255,0.08), transparent);
+  pointer-events: none;
+}
+
+.cover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cover-issue {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cover-cat {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.15);
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.1);
+  text-transform: uppercase;
+}
+
+.cover-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 1.8rem;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  margin: 0;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255,255,255,0.1);
+}
+
+.cover-footer {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.magazine-body {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-grow: 1;
+  background: rgba(0, 0, 0, 0.1);
+}

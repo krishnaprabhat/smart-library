@@ -1,0 +1,132 @@
+<div class="page-wrapper">
+  <nav class="navbar">
+    <div class="brand"><span>📚</span> Smart Library</div>
+    <div class="nav-links">
+      <a routerLink="/admin/dashboard" routerLinkActive="active">Dashboard</a>
+      <a routerLink="/admin/books" routerLinkActive="active">Books</a>
+      <a routerLink="/admin/borrows" routerLinkActive="active">Borrows</a>
+      <a routerLink="/admin/users" routerLinkActive="active">Users</a>
+    </div>
+    <div class="nav-user">
+      <span class="user-name">🛡 {{ auth.getName() }}</span>
+      <button class="btn-logout" (click)="auth.logout()">Logout</button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h2>📊 Admin Dashboard</h2>
+      <p>Real-time overview of library operations</p>
+    </div>
+
+    <!-- 🛡 Admin Profile Identification Banner -->
+    <div class="glass-card clay-card-purple" style="margin-bottom: 2.2rem; display: flex; align-items: center; justify-content: space-between; padding: 1.6rem 2.2rem; border-radius: 28px; gap: 1.5rem; border-color: rgba(167, 139, 250, 0.25);">
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <div style="font-size: 2.5rem; background: rgba(255,255,255,0.06); width: 68px; height: 68px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: inset 2px 2px 5px rgba(255,255,255,0.1), inset -2px -2px 5px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15);">
+          🛡
+        </div>
+        <div>
+          <h3 style="margin: 0; color: #fff; font-size: 1.45rem; font-weight: 800; letter-spacing: -0.02em;">{{ auth.getName() }}</h3>
+          <div style="margin-top: 0.4rem; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+            <span class="badge badge-branch" style="background: rgba(167, 139, 250, 0.2); border-color: rgba(167,139,250,0.4); text-transform: uppercase; font-size: 0.68rem; font-weight: 800; padding: 0.25rem 0.75rem;">LIBRARIAN ADMIN</span>
+            <span style="color: rgba(255,255,255,0.3); font-size: 0.8rem;">|</span>
+            <span style="font-size: 0.88rem; color: rgba(255,255,255,0.65); font-weight: 500;">ID: admin&#64;library.com</span>
+            <span style="color: rgba(255,255,255,0.3); font-size: 0.8rem;">|</span>
+            <span style="color: #6ee7b7; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem;"><span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981;"></span> Secure Session Active</span>
+          </div>
+        </div>
+      </div>
+      <div style="text-align: right; display: none; display: block;">
+        <span style="color: rgba(255,255,255,0.35); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">System Terminal</span><br>
+        <span style="color: #a78bfa; font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em;">PORTAL VERIFIED</span>
+      </div>
+    </div>
+
+    <!-- Stats Cards (Claymorphism Grid) -->
+    <div class="stats-grid" *ngIf="stats">
+      <div class="stat-card clay-card-purple">
+        <div class="stat-icon">📚</div>
+        <div class="stat-value">{{ stats.totalBooks }}</div>
+        <div class="stat-label">Total Books</div>
+      </div>
+      <div class="stat-card clay-card-green">
+        <div class="stat-icon">📦</div>
+        <div class="stat-value" style="color:#6ee7b7;">{{ stats.availableCopies }}</div>
+        <div class="stat-label">Available Copies</div>
+      </div>
+      <div class="stat-card clay-card-blue">
+        <div class="stat-icon">📤</div>
+        <div class="stat-value" style="color:#93c5fd;">{{ stats.activeBorrows }}</div>
+        <div class="stat-label">Active Borrows</div>
+      </div>
+      <div class="stat-card clay-card-red">
+        <div class="stat-icon">⚠️</div>
+        <div class="stat-value" style="color:#f87171">{{ stats.overdueBorrows }}</div>
+        <div class="stat-label">Overdue</div>
+      </div>
+      <div class="stat-card clay-card-blue">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value" style="color:#93c5fd;">{{ stats.totalUsers }}</div>
+        <div class="stat-label">Total Users</div>
+      </div>
+      <div class="stat-card clay-card-green">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value" style="color:#6ee7b7">Rs.{{ stats.totalFinesCollected.toFixed(2) }}</div>
+        <div class="stat-label">Fines Collected</div>
+      </div>
+      <div class="stat-card clay-card-amber">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-value" style="color:#fcd34d">Rs.{{ stats.totalFinesPending.toFixed(2) }}</div>
+        <div class="stat-label">Fines Pending</div>
+      </div>
+      <div class="stat-card clay-card-purple">
+        <div class="stat-icon">🔖</div>
+        <div class="stat-value">{{ stats.activeReservations }}</div>
+        <div class="stat-label">Reservations</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div style="display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;">
+      <a routerLink="/admin/books" class="btn btn-primary">+ Add Book</a>
+      <a routerLink="/admin/borrows" class="btn btn-success">Monitor Borrows</a>
+      <a routerLink="/admin/users" class="btn" style="background:rgba(255,255,255,0.1);color:#fff;">Manage Users</a>
+    </div>
+
+    <!-- Active Borrows Table -->
+    <div class="glass-card">
+      <h3 style="color:#c4b5fd;margin-bottom:1rem;">📋 Recently Active Borrows</h3>
+      <div *ngIf="loading" class="empty-state" style="padding:2rem;">
+        <div class="empty-icon">⏳</div><p>Loading...</p>
+      </div>
+      <div class="table-wrapper" *ngIf="!loading && activeBorrows.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th><th>Book</th><th>Borrowed</th><th>Due</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of activeBorrows | slice:0:10">
+              <td>
+                <strong>{{ b.studentName }}</strong><br>
+                <span style="color:rgba(255,255,255,0.5);font-size:0.8rem;">{{ b.studentId }}</span>
+              </td>
+              <td>{{ b.bookTitle }}</td>
+              <td>{{ b.borrowDate | date:'dd MMM' }}</td>
+              <td>{{ b.dueDate | date:'dd MMM' }}</td>
+              <td>
+                <span class="badge" [ngClass]="b.isOverdue ? 'badge-overdue' : 'badge-active'">
+                  {{ b.isOverdue ? '⚠ Overdue' : '✓ Active' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="!loading && activeBorrows.length === 0" class="empty-state" style="padding:2rem;">
+        <p>No active borrows.</p>
+      </div>
+    </div>
+  </main>
+</div>
