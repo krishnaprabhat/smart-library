@@ -13,7 +13,20 @@ var builder = WebApplication.CreateBuilder(args);
 // ────── Database ──────
 var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<LibraryDbContext>(options =>
-    options.UseSqlServer(connStr));
+{
+    if (connStr != null && (connStr.Contains("Host=") || connStr.Contains("Port=") || connStr.Contains("postgres://")))
+    {
+        if (connStr.StartsWith("postgres://"))
+        {
+            connStr = ParsePostgresUrl(connStr);
+        }
+        options.UseNpgsql(connStr);
+    }
+    else
+    {
+        options.UseSqlServer(connStr);
+    }
+});
 
 // ────── Repositories (Repository Pattern) ──────
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -119,3 +132,15 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+string ParsePostgresUrl(string url)
+{
+    var uri = new Uri(url);
+    var userInfo = uri.UserInfo.Split(':');
+    var username = userInfo[0];
+    var password = userInfo.Length > 1 ? userInfo[1] : string.Empty;
+    var host = uri.Host;
+    var port = uri.Port;
+    var database = uri.AbsolutePath.TrimStart('/');
+    return $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=True;";
+}
