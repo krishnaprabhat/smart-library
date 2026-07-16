@@ -1,0 +1,16 @@
+# Ignore compilation folders (prevents Windows build artifacts from polluting Linux Docker builds)
+**/bin/
+**/obj/
+
+# Ignore node/angular dependencies
+**/node_modules/
+**/.angular/
+**/dist/
+
+# Ignore local IDE/git configurations
+.vs/
+.git/
+.github/
+.vscode/
+*.user
+*.suo

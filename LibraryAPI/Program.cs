@@ -114,8 +114,15 @@ var app = builder.Build();
 // ────── Auto-apply migrations & seed on startup ──────
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
-    db.Database.Migrate();
+    try
+    {
+        var db = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
+        db.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[Warning] Failed to auto-apply migrations on startup: {ex.Message}");
+    }
 }
 
 // ────── Middleware ──────
