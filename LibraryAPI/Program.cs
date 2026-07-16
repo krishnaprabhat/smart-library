@@ -14,7 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<LibraryDbContext>(options =>
 {
-    if (connStr != null && (connStr.Contains("Host=") || connStr.Contains("Port=") || connStr.Contains("postgres://")))
+    if (builder.Environment.IsProduction())
+    {
+        options.UseSqlite("Data Source=smart_library.db");
+    }
+    else if (connStr != null && (connStr.Contains("Host=") || connStr.Contains("Port=") || connStr.Contains("postgres://")))
     {
         if (connStr.StartsWith("postgres://"))
         {
