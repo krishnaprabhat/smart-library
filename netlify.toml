@@ -1,0 +1,10 @@
+[build]
+  base = "library-frontend"
+  publish = "dist/library-frontend/browser"
+  command = "npm run build"
+
+# Redirects all routing requests to index.html to support Angular routing redirects (SPA)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
