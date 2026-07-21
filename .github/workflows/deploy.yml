@@ -6,6 +6,7 @@ on:
     paths:
       - 'library-frontend/**'
       - '.github/workflows/**'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -40,6 +41,9 @@ jobs:
       - name: Build
         run: npm run build -- --base-href=/smart-library/
         working-directory: library-frontend
+
+      - name: SPA 404 Fallback
+        run: cp library-frontend/dist/library-frontend/browser/index.html library-frontend/dist/library-frontend/browser/404.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
